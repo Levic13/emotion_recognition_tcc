@@ -1,145 +1,65 @@
-Emotion Recognition TCC — Deep Learning Project
-Projeto de Trabalho de Conclusão de Curso (TCC) em Ciência da Computação pela Pontifícia Universidade Católica do Paraná (PUCPR), focado no reconhecimento de emoções faciais utilizando técnicas modernas de Deep Learning.
+# Emotion Recognition — TCC PUCPR
 
-Nota: Este repositório é um fork do projeto original desenvolvido em colaboração com Alexandre Beiruth. Minha participação envolveu treinamento e avaliação dos modelos, tratamento de desbalanceamento de classes, experimentos com data augmentation e análise comparativa de arquiteturas.
+Reconhecimento de emoções faciais com Deep Learning, desenvolvido como Trabalho de Conclusão de Curso em Ciência da Computação na **PUCPR** (previsão: junho/2026).
 
+## O que o projeto faz
 
-Sobre o Projeto
-O projeto implementa e compara três arquiteturas de redes neurais profundas para classificação de sete emoções básicas a partir de expressões faciais em imagens:
-ModeloParâmetrosCaracterísticasEfficientNet-B0~5.3MCompound scaling, mobile-friendly, fine-tuning em duas fasesResNet-50~25.6MSkip connections, transfer learning, arquitetura consolidadaEfficientViT~3.2MVision Transformer eficiente, mecanismo de atenção compacto
-Emoções Reconhecidas
-Raiva · Desgosto · Medo · Felicidade · Neutro · Tristeza · Surpresa
+Implementa e compara três arquiteturas de redes neurais para classificar **7 emoções básicas** (raiva, desgosto, medo, felicidade, neutro, tristeza, surpresa) a partir de imagens faciais.
 
-Destaques Técnicos
+| Modelo | Parâmetros | Destaques |
+|---|---|---|
+| EfficientNet-B0 | ~5.3M | Fine-tuning em duas fases |
+| ResNet-50 | ~25.6M | Transfer learning clássico |
+| EfficientViT | ~3.2M | Vision Transformer eficiente |
 
-Transfer learning com fine-tuning nas três arquiteturas
-Tratamento de desbalanceamento severo de classes (até 23× entre classes) via class weights e data augmentation
-Análise de erro detalhada com identificação de vieses por classe
-Estudos de ablação para comparação de componentes dos modelos
-Containerização com Docker para reprodutibilidade
-Monitoramento de recursos (CPU, GPU, memória) durante treinamento
-Exportação automática de métricas em CSV e visualizações
+## Principais desafios técnicos
 
+- Desbalanceamento severo de classes (até 23× entre classes) tratado com class weights e data augmentation
+- Comparação de arquiteturas CNN vs. Vision Transformer
+- Análise de erro por classe e estudos de ablação
+- Datasets: **RAF-DB** (29.672 imagens) e **EXPW** (in-the-wild)
 
-Datasets Utilizados
-DatasetImagensDescriçãoRAF-DB29.672Imagens de alta qualidade com anotações confiáveisEXPWvariávelImagens em ambiente não controlado (in-the-wild)
-Os dados processados, modelos treinados, logs e resultados completos estão disponíveis no Google Drive do projeto (acesso mediante solicitação).
+## Tecnologias
 
-Requisitos do Sistema
-Hardware:
+`Python` `PyTorch` `CUDA 12.1` `Docker` `Jupyter`
 
-GPU: NVIDIA com CUDA 12.1+ (RTX 3060 ou superior recomendado)
-RAM: 16 GB mínimo
-Armazenamento: ~90 GB (datasets + modelos)
+## Como rodar
 
-Software:
-
-Python 3.8+
-Ubuntu 24.04 LTS (recomendado)
-Docker 20.10+ (opcional)
-NVIDIA Drivers 525.60+
-
-
-Instalação
-Opção 1 — Automatizada
-bashgit clone https://github.com/Leandro-Cardoso/emotion_recognition_tcc.git
+```bash
+# 1. Clonar e instalar
+git clone https://github.com/Levic13/emotion_recognition_tcc.git
 cd emotion_recognition_tcc
-python scripts/setup_environment.py
-source venv/bin/activate
-Opção 2 — Manual
-bashpython3 -m venv venv
-source venv/bin/activate
-pip install --upgrade pip
-pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
 pip install -r requirements.txt
-pip install -e .
-Opção 3 — Docker
-bashdocker-compose up --build
-# Jupyter Lab disponível em: http://localhost:8888
 
-Uso Rápido
-bash# Preparar datasets (estrutura esperada)
-data/raw/RAF-DB
-data/raw/EXPW
-
-# Executar todos os experimentos
+# 2. Executar experimentos
 python scripts/run_experiments.py
 
-# Executar modelo específico
-python scripts/run_experiments.py --models efficientnet
+# 3. Ou via Docker
+docker-compose up --build
+# Jupyter Lab em: http://localhost:8888
+```
 
-# Iniciar Jupyter Lab
-jupyter lab
+**Requisitos:** GPU NVIDIA com CUDA 12.1+, 16 GB RAM, ~90 GB de armazenamento.
 
-Estrutura do Projeto
-emotion_recognition_tcc/
-├── README.md
-├── Dockerfile & docker-compose.yml
-├── requirements.txt & setup.py
-│
-├── data/
-│   ├── raw/          # Datasets originais
-│   └── processed/    # Dados pré-processados
-│
-├── notebooks/        # Análise exploratória e treinamento step-by-step
-│
+## Estrutura
+
+```
+├── notebooks/       # Análise exploratória e treinamento
 ├── src/
-│   ├── models/       # Implementações: EfficientNet, ResNet50, EfficientViT
-│   ├── data/         # Carregamento e pré-processamento
-│   ├── training/     # Pipeline de treinamento
-│   ├── evaluation/   # Avaliação e métricas
-│   ├── inference/    # Inferência em tempo real
-│   └── utils/        # Utilitários gerais
-│
-├── scripts/
-│   ├── setup_environment.py
-│   ├── run_experiments.py
-│   └── generate_reports.py
-│
-└── results/
-    ├── models/       # Checkpoints .pth
-    ├── logs/         # Histórico de treinamento
-    ├── plots/        # Matrizes de confusão e gráficos
-    └── csv_outputs/  # Métricas exportadas
+│   ├── models/      # EfficientNet, ResNet50, EfficientViT
+│   ├── training/    # Pipeline de treinamento
+│   └── evaluation/  # Métricas e visualizações
+├── scripts/         # Setup e execução de experimentos
+└── results/         # Logs, gráficos e CSVs
+```
 
-Configuração Principal
-yaml# config/config.yaml
-data:
-  preprocessing:
-    image_size: 224
-    normalize: true
+## Referências
 
-training:
-  batch_size: 32
-  epochs: 100
-  learning_rate: 0.001
-  mixed_precision: true
+- Tan & Le (2019). *EfficientNet: Rethinking Model Scaling for CNNs.*
+- He et al. (2016). *Deep Residual Learning for Image Recognition.*
+- Li et al. (2017). *RAF-DB: Reliable Crowdsourcing for Facial Expression Recognition.*
 
-models:
-  efficientnet:
-    pretrained: true
-    dropout_rate: 0.5
+---
 
-Tecnologias Utilizadas
-Mostrar Imagem
-Mostrar Imagem
-Mostrar Imagem
-Mostrar Imagem
-
-Referências
-
-Tan, M., & Le, Q. (2019). EfficientNet: Rethinking Model Scaling for Convolutional Neural Networks.
-He, K., et al. (2016). Deep Residual Learning for Image Recognition.
-Li, S., et al. (2017). Reliable Crowdsourcing and Deep Locality-Preserving Learning for Facial Expression Recognition.
-Liu, Z., et al. (2015). The Expression in-the-Wild (ExpW) Database.
-
-
-Orientação Acadêmica
-
-Orientador: Prof. Rayson Laroca — PUCPR
-Instituição: Pontifícia Universidade Católica do Paraná
-Curso: Bacharelado em Ciência da Computação
-Conclusão prevista: Junho de 2026
-
-
-Leandro Cardoso · LinkedIn · PUCPR 2026
+**Orientador:** Prof. Rayson Laroca — PUCPR  
+**Autor:** Leandro Cardoso · [LinkedIn](https://linkedin.com/in/leandro-cardoso-aaa803250)
